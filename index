@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>썬귤이의 무지출 챌린지</title>
+<style>
+:root{--ink:#382b20;--muted:#998878;--line:#eee2d3;--cream:#fffaf1;--orange:#e98a3a;--deep:#bd6425;--yellow:#ffe9a0;--peach:#f9dfc8}
+*{box-sizing:border-box}body{margin:0;padding:14px;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:transparent}
+.widget{max-width:760px;margin:auto;padding:clamp(16px,4vw,28px);border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#fffdf8,var(--cream));box-shadow:0 10px 30px #76502712}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:10px;letter-spacing:.15em;font-weight:800;color:var(--deep);margin-bottom:7px}h1{font-size:clamp(23px,4vw,31px);letter-spacing:-.06em;line-height:1.2;margin:0}.subtitle{font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0 0}.mascot{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:19px;background:#fff0b9;font-size:29px;transform:rotate(3deg)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:18px}.stat{min-width:0;padding:14px 12px;border:1px solid #f2e8dc;border-radius:16px;background:white}.label{font-size:12px;color:var(--muted);margin-bottom:8px}.value{font-size:clamp(19px,3.5vw,27px);font-weight:850;letter-spacing:-.05em}.value small{font-size:12px;color:var(--muted);letter-spacing:0}.progress{height:7px;background:#f4eadc;border-radius:20px;margin-top:10px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#f6c95f,var(--orange));transition:width .2s}
+.calendar{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(12px,3vw,21px)}.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:17px}.monthtitle{font-size:20px;font-weight:850;letter-spacing:-.04em}.nav{display:flex;gap:7px;align-items:center}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}.navbtn{width:35px;height:35px;border:1px solid var(--line);border-radius:12px;background:var(--cream);font-size:20px;color:var(--ink)}.todaybtn{border:0;border-radius:12px;background:var(--peach);color:#8b4b1c;padding:10px 12px;font-size:12px;font-weight:800}
+.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekdays{margin-bottom:7px}.weekday{text-align:center;font-size:11px;color:var(--muted);padding:7px 0;font-weight:700}.weekday:first-child{color:#d67c57}.weekday:last-child{color:#7790ad}
+.day{min-width:0;aspect-ratio:1;border:1px solid transparent;border-radius:13px;background:#fffaf5;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform .12s,background .12s}.day:not(.empty):hover{border-color:#f0c08f;transform:translateY(-1px)}.day.empty{background:transparent;pointer-events:none}.num{font-size:clamp(11px,2vw,14px);font-weight:700;line-height:1}.mark{font-size:clamp(11px,2vw,16px);line-height:1;height:15px}.day.success{background:var(--yellow);border-color:#f3d36e}.day.success .mark{color:var(--deep)}.day.today{box-shadow:inset 0 0 0 2px var(--orange)}.day.today .num{color:var(--deep)}.day.future{color:#c7bdb1}.day:focus-visible,.navbtn:focus-visible,.todaybtn:focus-visible{outline:3px solid #e8a04d;outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;color:var(--muted);font-size:11px}.legend span{display:inline-flex;align-items:center;gap:6px}.dot,.ring{width:13px;height:13px;border-radius:5px;display:inline-block}.dot{background:var(--yellow);border:1px solid #f3d36e}.ring{border:2px solid var(--orange)}.hint{margin:13px 2px 0;font-size:11px;line-height:1.6;color:var(--muted)}.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);color:#aa9b8b;font-size:10px}
+@media(max-width:480px){body{padding:4px}.widget{padding:14px 11px;border-radius:18px}.top{margin-bottom:16px}.mascot{width:44px;height:44px;flex-basis:44px;border-radius:15px;font-size:24px}.stats{gap:5px}.stat{padding:10px 8px;border-radius:12px}.label{font-size:10px;margin-bottom:7px}.value{font-size:19px}.calendar{padding:10px 7px;border-radius:16px}.weekdays,.days{gap:3px}.day{border-radius:9px}.mark{height:12px}.monthtitle{font-size:18px}}
+</style>
+</head>
+<body>
+<main class="widget">
+<header class="top"><div><div class="eyebrow">SSUNGYUL'S SAVE CHALLENGE</div><h1>이번 달 무지출 챌린지</h1><p class="subtitle">작은 소비를 참은 하루가 모여, 내 자산이 돼요 🍊</p></div><div class="mascot" aria-hidden="true">🍊</div></header>
+<section class="stats">
+<div class="stat"><div class="label">무지출 성공일</div><div class="value"><span id="count">0</span><small> 일</small></div></div>
+<div class="stat"><div class="label">이번 달 성공률</div><div class="value"><span id="rate">0</span><small>%</small></div><div class="progress"><div class="fill" id="fill"></div></div></div>
+<div class="stat"><div class="label">이번 달 남은 날</div><div class="value"><span id="remaining">0</span><small> 일</small></div></div>
+</section>
+<section class="calendar"><div class="monthbar"><div class="monthtitle" id="monthTitle"></div><div class="nav"><button class="navbtn" id="prev" aria-label="지난달">‹</button><button class="todaybtn" id="today">이번 달</button><button class="navbtn" id="next" aria-label="다음 달">›</button></div></div>
+<div class="weekdays"><div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div></div>
+<div class="days" id="days" role="group" aria-label="날짜별 무지출 성공 체크"></div>
+<div class="legend"><span><i class="dot"></i> 무지출 성공</span><span><i class="ring"></i> 오늘</span><span>날짜를 누르면 체크할 수 있어요</span></div>
+<p class="hint">무지출 성공일은 직접 체크해 주세요. 기록은 현재 사용 중인 브라우저에 저장됩니다. 브라우저 데이터를 삭제하거나 다른 기기를 사용하면 기록이 이어지지 않을 수 있어요.</p>
+</section>
+<div class="footer"><span>썬귤이의 세이브챌린지</span><span>매일 조금씩, 자산을 키우는 습관</span></div>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id), now=new Date();
+let year=now.getFullYear(), month=now.getMonth(), records={};
+const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+const daysIn=(y,m)=>new Date(y,m+1,0).getDate();
+const current=()=>year===now.getFullYear()&&month===now.getMonth();
+try{records=JSON.parse(localStorage.getItem('ssungyul-no-spend-v1')||'{}')||{}}catch(e){records={}}
+function save(){try{localStorage.setItem('ssungyul-no-spend-v1',JSON.stringify(records))}catch(e){}}
+function render(){
+ const total=daysIn(year,month), first=new Date(year,month,1).getDay();
+ const checked=[];for(let d=1;d<=total;d++)if(records[key(year,month,d)])checked.push(d);
+ $('monthTitle').textContent=`${year}년 ${month+1}월`; $('count').textContent=checked.length;
+ const elapsed=current()?now.getDate():total;
+ const eligible=checked.filter(d=>!current()||d<=now.getDate()).length;
+ const rate=elapsed?Math.min(100,Math.round(eligible/elapsed*100)):0;
+ $('rate').textContent=rate;$('fill').style.width=rate+'\%';$('remaining').textContent=current()?Math.max(0,total-now.getDate()):0;
+ const grid=$('days');grid.innerHTML='';
+ for(let i=0;i<first;i++){const e=document.createElement('div');e.className='day empty';e.setAttribute('aria-hidden','true');grid.appendChild(e)}
+ for(let d=1;d<=total;d++){
+  const k=key(year,month,d), success=!!records[k], isToday=current()&&d===now.getDate();
+  const future=new Date(year,month,d)>new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const b=document.createElement('button');b.type='button';b.className='day'+(success?' success':'')+(isToday?' today':'')+(future?' future':'');
+  b.setAttribute('aria-pressed',String(success));b.setAttribute('aria-label',`${year}년 ${month+1}월 ${d}일, ${success?'무지출 성공':'미체크'}`);
+  const n=document.createElement('span');n.className='num';n.textContent=d;
+  const mark=document.createElement('span');mark.className='mark';mark.textContent=success?'♥':'';
+  b.append(n,mark);b.addEventListener('click',()=>{if(records[k])delete records[k];else records[k]=true;save();render()});grid.appendChild(b);
+ }
+}
+$('prev').addEventListener('click',()=>{month--;if(month<0){month=11;year--}render()});
+$('next').addEventListener('click',()=>{month++;if(month>11){month=0;year++}render()});$('today').addEventListener('click',()=>{year=now.getFullYear();month=now.getMonth();render()});
+render();
+})();
+</script>
+</body></html>
+```[cite: 2]
