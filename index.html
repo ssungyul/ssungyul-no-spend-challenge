@@ -88,10 +88,23 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   align-items:center;justify-content:center;gap:4px;padding:0
 }
 .day.empty{background:transparent;pointer-events:none}
-.day.success{background:var(--yellow);border-color:#f3d36e}
-.day.success .mark{color:var(--deep)}
-.day.spent{background:#fff0ec;border-color:#f1c5bb}
-.day.spent .mark{color:var(--red)}
+/* 무지출 성공: 따뜻한 주황색 */
+.day.success {
+  background: #fff0da;
+  border-color: #f4bd75;
+}
+.day.success .mark {
+  color: #e97820;
+}
+
+/* 지출한 날: 연한 파란색 */
+.day.spent {
+  background: #eaf3ff;
+  border-color: #b8d5f5;
+}
+.day.spent .mark {
+  color: #397ab8;
+}
 .day.today{box-shadow:inset 0 0 0 2px var(--orange)}
 .day.today .num{color:var(--deep)}
 .day.future,.day.unknown{color:#b8aa9b;background:#fcfaf7}
@@ -190,8 +203,8 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
       <div class="days" id="days" aria-label="날짜별 무지출 결과"></div>
 
       <div class="legend">
-        <span><i class="dot"></i> 무지출 성공</span>
-        <span><i class="spent-dot"></i> 지출 기록 있음</span>
+        <span><b>🧡</b> 무지출 성공</span>
+<span><b style="color:#397ab8">×</b> 지출 기록 있음</span>
         <span><i class="ring"></i> 오늘</span>
       </div>
 
@@ -473,7 +486,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
       const mark = document.createElement("span");
       mark.className = "mark";
-      mark.textContent = isFuture ? "" : !known ? "…" : spent ? "×" : "✓";
+      mark.textContent = isFuture ? "" : !known ? "…" : spent ? "×" : "🧡";
 
       button.setAttribute("aria-label",
         `${year}년 ${month + 1}월 ${d}일, ${
