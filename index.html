@@ -1,71 +1,878 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fffaf1">
 <title>썬귤이의 무지출 챌린지</title>
+
 <style>
-:root{--ink:#382b20;--muted:#998878;--line:#eee2d3;--cream:#fffaf1;--orange:#e98a3a;--deep:#bd6425;--yellow:#ffe9a0;--peach:#f9dfc8}
-*{box-sizing:border-box}body{margin:0;padding:14px;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:transparent}
-.widget{max-width:760px;margin:auto;padding:clamp(16px,4vw,28px);border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#fffdf8,var(--cream));box-shadow:0 10px 30px #76502712}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:10px;letter-spacing:.15em;font-weight:800;color:var(--deep);margin-bottom:7px}h1{font-size:clamp(23px,4vw,31px);letter-spacing:-.06em;line-height:1.2;margin:0}.subtitle{font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0 0}.mascot{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:19px;background:#fff0b9;font-size:29px;transform:rotate(3deg)}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:18px}.stat{min-width:0;padding:14px 12px;border:1px solid #f2e8dc;border-radius:16px;background:white}.label{font-size:12px;color:var(--muted);margin-bottom:8px}.value{font-size:clamp(19px,3.5vw,27px);font-weight:850;letter-spacing:-.05em}.value small{font-size:12px;color:var(--muted);letter-spacing:0}.progress{height:7px;background:#f4eadc;border-radius:20px;margin-top:10px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#f6c95f,var(--orange));transition:width .2s}
-.calendar{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(12px,3vw,21px)}.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:17px}.monthtitle{font-size:20px;font-weight:850;letter-spacing:-.04em}.nav{display:flex;gap:7px;align-items:center}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}.navbtn{width:35px;height:35px;border:1px solid var(--line);border-radius:12px;background:var(--cream);font-size:20px;color:var(--ink)}.todaybtn{border:0;border-radius:12px;background:var(--peach);color:#8b4b1c;padding:10px 12px;font-size:12px;font-weight:800}
-.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekdays{margin-bottom:7px}.weekday{text-align:center;font-size:11px;color:var(--muted);padding:7px 0;font-weight:700}.weekday:first-child{color:#d67c57}.weekday:last-child{color:#7790ad}
-.day{min-width:0;aspect-ratio:1;border:1px solid transparent;border-radius:13px;background:#fffaf5;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform .12s,background .12s}.day:not(.empty):hover{border-color:#f0c08f;transform:translateY(-1px)}.day.empty{background:transparent;pointer-events:none}.num{font-size:clamp(11px,2vw,14px);font-weight:700;line-height:1}.mark{font-size:clamp(11px,2vw,16px);line-height:1;height:15px}.day.success{background:var(--yellow);border-color:#f3d36e}.day.success .mark{color:var(--deep)}.day.today{box-shadow:inset 0 0 0 2px var(--orange)}.day.today .num{color:var(--deep)}.day.future{color:#c7bdb1}.day:focus-visible,.navbtn:focus-visible,.todaybtn:focus-visible{outline:3px solid #e8a04d;outline-offset:2px}
-.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;color:var(--muted);font-size:11px}.legend span{display:inline-flex;align-items:center;gap:6px}.dot,.ring{width:13px;height:13px;border-radius:5px;display:inline-block}.dot{background:var(--yellow);border:1px solid #f3d36e}.ring{border:2px solid var(--orange)}.hint{margin:13px 2px 0;font-size:11px;line-height:1.6;color:var(--muted)}.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);color:#aa9b8b;font-size:10px}
-@media(max-width:480px){body{padding:4px}.widget{padding:14px 11px;border-radius:18px}.top{margin-bottom:16px}.mascot{width:44px;height:44px;flex-basis:44px;border-radius:15px;font-size:24px}.stats{gap:5px}.stat{padding:10px 8px;border-radius:12px}.label{font-size:10px;margin-bottom:7px}.value{font-size:19px}.calendar{padding:10px 7px;border-radius:16px}.weekdays,.days{gap:3px}.day{border-radius:9px}.mark{height:12px}.monthtitle{font-size:18px}}
+:root {
+  --ink: #382b20;
+  --muted: #998878;
+  --line: #eee2d3;
+  --cream: #fffaf1;
+  --orange: #e98a3a;
+  --deep: #bd6425;
+  --yellow: #ffe9a0;
+  --peach: #f9dfc8;
+  --red: #ba6252;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 14px;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: var(--ink);
+  background: transparent;
+}
+
+[hidden] { display: none !important; }
+
+.widget {
+  max-width: 760px;
+  margin: auto;
+  padding: clamp(16px, 4vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #fffdf8, var(--cream));
+  box-shadow: 0 10px 30px #76502712;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .15em;
+  font-weight: 800;
+  color: var(--deep);
+  margin-bottom: 7px;
+}
+
+h1 {
+  font-size: clamp(23px, 4vw, 31px);
+  letter-spacing: -.06em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+
+.mascot {
+  display: grid;
+  place-items: center;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  border-radius: 19px;
+  background: #fff0b9;
+  font-size: 29px;
+  transform: rotate(3deg);
+}
+
+.panel {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: white;
+  margin-bottom: 16px;
+}
+
+.panel h2 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.panel p {
+  margin: 6px 0 12px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  font: inherit;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 3px solid #e8a04d;
+  outline-offset: 2px;
+}
+
+.primary {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 13px;
+  background: var(--orange);
+  color: white;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.primary:disabled { opacity: .6; cursor: wait; }
+
+.status {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #48764d;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.status.error { color: var(--red); }
+
+.connection-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 1px 15px;
+}
+
+.small-button {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  min-width: 0;
+  padding: 14px 12px;
+  border: 1px solid #f2e8dc;
+  border-radius: 16px;
+  background: white;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.value {
+  font-size: clamp(19px, 3.5vw, 27px);
+  font-weight: 850;
+  letter-spacing: -.05em;
+}
+
+.value small {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.progress {
+  height: 7px;
+  background: #f4eadc;
+  border-radius: 20px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #f6c95f, var(--orange));
+  transition: width .2s;
+}
+
+.calendar {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(12px, 3vw, 21px);
+}
+
+.monthbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 17px;
+}
+
+.monthtitle {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -.04em;
+}
+
+.nav {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.navbtn {
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  font-size: 20px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.todaybtn {
+  border: 0;
+  border-radius: 12px;
+  background: var(--peach);
+  color: #8b4b1c;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.weekdays, .days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.weekdays { margin-bottom: 7px; }
+
+.weekday {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 7px 0;
+  font-weight: 700;
+}
+
+.weekday:first-child { color: #d67c57; }
+.weekday:last-child { color: #7790ad; }
+
+.day {
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: #fffaf5;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.day:not(.future):hover {
+  border-color: #f0c08f;
+}
+
+.day.empty {
+  background: transparent;
+  pointer-events: none;
+}
+
+.day.success {
+  background: var(--yellow);
+  border-color: #f3d36e;
+}
+
+.day.success .mark { color: var(--deep); }
+
+.day.spent {
+  background: #fff0ec;
+  border-color: #f1c5bb;
+}
+
+.day.spent .mark { color: var(--red); }
+
+.day.today {
+  box-shadow: inset 0 0 0 2px var(--orange);
+}
+
+.day.today .num { color: var(--deep); }
+
+.day.future {
+  color: #c7bdb1;
+  cursor: default;
+  background: #fcfaf7;
+}
+
+.num {
+  font-size: clamp(11px, 2vw, 14px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mark {
+  font-size: clamp(10px, 2vw, 15px);
+  line-height: 1;
+  height: 15px;
+  font-weight: 800;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot, .spent-dot, .ring {
+  width: 13px;
+  height: 13px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.dot {
+  background: var(--yellow);
+  border: 1px solid #f3d36e;
+}
+
+.spent-dot {
+  background: #fff0ec;
+  border: 1px solid #f1c5bb;
+}
+
+.ring {
+  border: 2px solid var(--orange);
+}
+
+.hint {
+  margin: 13px 2px 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.day-detail {
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  font-size: 12px;
+  line-height: 1.7;
+  background: #fffdf8;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: #aa9b8b;
+  font-size: 10px;
+}
+
+@media (max-width: 480px) {
+  body { padding: 4px; }
+  .widget { padding: 14px 11px; border-radius: 18px; }
+  .top { margin-bottom: 16px; }
+  .mascot {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    border-radius: 15px;
+    font-size: 24px;
+  }
+  .stats { gap: 5px; }
+  .stat { padding: 10px 8px; border-radius: 12px; }
+  .label { font-size: 10px; margin-bottom: 7px; }
+  .value { font-size: 19px; }
+  .calendar { padding: 10px 7px; border-radius: 16px; }
+  .weekdays, .days { gap: 3px; }
+  .day { border-radius: 9px; }
+  .mark { height: 12px; }
+  .monthtitle { font-size: 18px; }
+}
 </style>
 </head>
+
 <body>
 <main class="widget">
-<header class="top"><div><div class="eyebrow">SSUNGYUL'S SAVE CHALLENGE</div><h1>이번 달 무지출 챌린지</h1><p class="subtitle">작은 소비를 참은 하루가 모여, 내 자산이 돼요💵 </p></div><div class="mascot" aria-hidden="true">🍊</div></header>
-<section class="stats">
-<div class="stat"><div class="label">무지출 성공일</div><div class="value"><span id="count">0</span><small> 일</small></div></div>
-<div class="stat"><div class="label">이번 달 성공률</div><div class="value"><span id="rate">0</span><small>%</small></div><div class="progress"><div class="fill" id="fill"></div></div></div>
-<div class="stat"><div class="label">이번 달 남은 날</div><div class="value"><span id="remaining">0</span><small> 일</small></div></div>
-</section>
-<section class="calendar"><div class="monthbar"><div class="monthtitle" id="monthTitle"></div><div class="nav"><button class="navbtn" id="prev" aria-label="지난달">‹</button><button class="todaybtn" id="today">이번 달</button><button class="navbtn" id="next" aria-label="다음 달">›</button></div></div>
-<div class="weekdays"><div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div></div>
-<div class="days" id="days" role="group" aria-label="날짜별 무지출 성공 체크"></div>
-<div class="legend"><span><i class="dot"></i> 무지출 성공</span><span><i class="ring"></i> 오늘</span><span>날짜를 누르면 체크할 수 있어요</span></div>
-<p class="hint">무지출 성공일은 직접 체크해 주세요. 기록은 현재 사용 중인 브라우저에 저장됩니다. 브라우저 데이터를 삭제하거나 다른 기기를 사용하면 기록이 이어지지 않을 수 있어요.</p>
-</section>
-<div class="footer"><span>썬귤이의 세이브챌린지</span><span>매일 조금씩, 자산을 키우는 습관</span></div>
+  <header class="top">
+    <div>
+      <div class="eyebrow">SSUNGYUL'S SAVE CHALLENGE</div>
+      <h1>이번 달 무지출 챌린지</h1>
+      <p class="subtitle">
+        작은 소비를 참은 하루가 모여, 내 자산이 돼요 🍊
+      </p>
+    </div>
+    <div class="mascot" aria-hidden="true">🍊</div>
+  </header>
+
+  <section class="panel" id="loginPanel">
+    <h2>내 Notion 가계부 연결하기</h2>
+    <p>
+      개인용 테스트 화면이에요. Cloudflare에 저장한 앱 비밀번호로
+      접속해요. 비밀번호는 이 브라우저에 저장하지 않아요.
+    </p>
+    <form id="loginForm">
+      <label class="field-label" for="password">앱 비밀번호</label>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Cloudflare에 설정한 APP_PASSWORD"
+        required
+      >
+      <button class="primary" id="connectButton" type="submit">
+        가계부 연결하기
+      </button>
+    </form>
+    <div id="loginStatus" class="status" role="status"></div>
+  </section>
+
+  <section id="mainPanel" hidden>
+    <div class="connection-bar">
+      <span id="connectionStatus">Notion 연결 상태 확인 중</span>
+      <div>
+        <button class="small-button" id="refreshButton" type="button">
+          기록 새로고침
+        </button>
+        <button class="small-button" id="logoutButton" type="button">
+          연결 해제
+        </button>
+      </div>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="label">무지출 성공일</div>
+        <div class="value"><span id="count">0</span><small> 일</small></div>
+      </div>
+      <div class="stat">
+        <div class="label">이번 달 성공률</div>
+        <div class="value"><span id="rate">0</span><small>%</small></div>
+        <div class="progress"><div class="fill" id="fill"></div></div>
+      </div>
+      <div class="stat">
+        <div class="label">이번 달 남은 날</div>
+        <div class="value"><span id="remaining">0</span><small> 일</small></div>
+      </div>
+    </section>
+
+    <section class="calendar">
+      <div class="monthbar">
+        <div class="monthtitle" id="monthTitle"></div>
+        <div class="nav">
+          <button class="navbtn" id="prev" type="button" aria-label="지난달">‹</button>
+          <button class="todaybtn" id="today" type="button">이번 달</button>
+          <button class="navbtn" id="next" type="button" aria-label="다음 달">›</button>
+        </div>
+      </div>
+
+      <div class="weekdays">
+        <div class="weekday">일</div>
+        <div class="weekday">월</div>
+        <div class="weekday">화</div>
+        <div class="weekday">수</div>
+        <div class="weekday">목</div>
+        <div class="weekday">금</div>
+        <div class="weekday">토</div>
+      </div>
+
+      <div class="days" id="days" aria-label="날짜별 무지출 결과"></div>
+
+      <div class="legend">
+        <span><i class="dot"></i> 무지출 성공</span>
+        <span><i class="spent-dot"></i> 지출 기록 있음</span>
+        <span><i class="ring"></i> 오늘</span>
+      </div>
+
+      <div class="day-detail" id="dayDetail" aria-live="polite">
+        날짜를 누르면 해당 날짜의 판정 결과를 확인할 수 있어요.
+      </div>
+
+      <p class="hint">
+        Notion의 매일가계부를 기준으로 자동 판정해요.
+        해당 날짜에 대분류가 '지출'인 항목이 있으면 실패,
+        없으면 성공으로 표시해요. 미래 날짜는 판정하지 않아요.
+      </p>
+      <p class="hint" id="dataWarning" hidden></p>
+    </section>
+  </section>
+
+  <div class="footer">
+    <span>썬귤이의 세이브 챌린지</span>
+    <span>매일 조금씩, 자산을 키우는 습관</span>
+  </div>
 </main>
+
 <script>
-(()=>{
-const $=id=>document.getElementById(id), now=new Date();
-let year=now.getFullYear(), month=now.getMonth(), records={};
-const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-const daysIn=(y,m)=>new Date(y,m+1,0).getDate();
-const current=()=>year===now.getFullYear()&&month===now.getMonth();
-try{records=JSON.parse(localStorage.getItem('ssungyul-no-spend-v1')||'{}')||{}}catch(e){records={}}
-function save(){try{localStorage.setItem('ssungyul-no-spend-v1',JSON.stringify(records))}catch(e){}}
-function render(){
- const total=daysIn(year,month), first=new Date(year,month,1).getDay();
- const checked=[];for(let d=1;d<=total;d++)if(records[key(year,month,d)])checked.push(d);
- $('monthTitle').textContent=`${year}년 ${month+1}월`; $('count').textContent=checked.length;
- const elapsed=current()?now.getDate():total;
- const eligible=checked.filter(d=>!current()||d<=now.getDate()).length;
- const rate=elapsed?Math.min(100,Math.round(eligible/elapsed*100)):0;
- $('rate').textContent=rate;$('fill').style.width=rate+'\%';$('remaining').textContent=current()?Math.max(0,total-now.getDate()):0;
- const grid=$('days');grid.innerHTML='';
- for(let i=0;i<first;i++){const e=document.createElement('div');e.className='day empty';e.setAttribute('aria-hidden','true');grid.appendChild(e)}
- for(let d=1;d<=total;d++){
-  const k=key(year,month,d), success=!!records[k], isToday=current()&&d===now.getDate();
-  const future=new Date(year,month,d)>new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  const b=document.createElement('button');b.type='button';b.className='day'+(success?' success':'')+(isToday?' today':'')+(future?' future':'');
-  b.setAttribute('aria-pressed',String(success));b.setAttribute('aria-label',`${year}년 ${month+1}월 ${d}일, ${success?'무지출 성공':'미체크'}`);
-  const n=document.createElement('span');n.className='num';n.textContent=d;
-  const mark=document.createElement('span');mark.className='mark';mark.textContent=success?'♥':'';
-  b.append(n,mark);b.addEventListener('click',()=>{if(records[k])delete records[k];else records[k]=true;save();render()});grid.appendChild(b);
- }
-}
-$('prev').addEventListener('click',()=>{month--;if(month<0){month=11;year--}render()});
-$('next').addEventListener('click',()=>{month++;if(month>11){month=0;year++}render()});$('today').addEventListener('click',()=>{year=now.getFullYear();month=now.getMonth();render()});
-render();
+(() => {
+  "use strict";
+
+  const API_BASE =
+    "https://ssungyul-notion-api.tngus1501.workers.dev";
+
+  const $ = id => document.getElementById(id);
+
+  let authHeader = "";
+  let expenseDates = new Set();
+  let expenseCounts = new Map();
+  let recordCount = 0;
+  let hasMoreRecords = false;
+
+  const initialDate = new Date();
+  let year = initialDate.getFullYear();
+  let month = initialDate.getMonth();
+
+  function dateKey(y, m, d) {
+    return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  }
+
+  function getTodayKey() {
+    const now = new Date();
+    return dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  function daysInMonth(y, m) {
+    return new Date(y, m + 1, 0).getDate();
+  }
+
+  function monthCompare(y, m, otherY, otherM) {
+    if (y < otherY) return -1;
+    if (y > otherY) return 1;
+    if (m < otherM) return -1;
+    if (m > otherM) return 1;
+    return 0;
+  }
+
+  function setLoginStatus(message, isError = false) {
+    $("loginStatus").textContent = message;
+    $("loginStatus").classList.toggle("error", isError);
+  }
+
+  async function fetchExpenses(header) {
+    const response = await fetch(`${API_BASE}/read-expenses`, {
+      method: "GET",
+      headers: {
+        "Authorization": header
+      },
+      cache: "no-store"
+    });
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("서버 응답을 읽지 못했어요. 다시 시도해 주세요.");
+    }
+
+    if (response.status === 401) {
+      throw new Error("비밀번호가 맞지 않아요. 다시 확인해 주세요.");
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        data.details?.message ||
+        "가계부를 불러오지 못했어요."
+      );
+    }
+
+    if (!Array.isArray(data.records)) {
+      throw new Error("서버에서 가계부 기록을 찾지 못했어요.");
+    }
+
+    const newExpenseDates = new Set();
+    const newExpenseCounts = new Map();
+
+    for (const record of data.records) {
+      const date = String(record["날짜"] || "").slice(0, 10);
+
+      if (date && record["대분류"] === "지출") {
+        newExpenseDates.add(date);
+        newExpenseCounts.set(
+          date,
+          (newExpenseCounts.get(date) || 0) + 1
+        );
+      }
+    }
+
+    expenseDates = newExpenseDates;
+    expenseCounts = newExpenseCounts;
+    recordCount = Number(data.count ?? data.records.length);
+    hasMoreRecords = Boolean(data.has_more);
+  }
+
+  function render() {
+    const now = new Date();
+    const todayKey = getTodayKey();
+    const total = daysInMonth(year, month);
+    const firstDay = new Date(year, month, 1).getDay();
+    const monthRelation = monthCompare(
+      year, month, now.getFullYear(), now.getMonth()
+    );
+
+    let elapsedDays = 0;
+
+    if (monthRelation < 0) {
+      elapsedDays = total;
+    } else if (monthRelation === 0) {
+      elapsedDays = now.getDate();
+    }
+
+    let successfulCount = 0;
+
+    for (let day = 1; day <= elapsedDays; day++) {
+      if (!expenseDates.has(dateKey(year, month, day))) {
+        successfulCount++;
+      }
+    }
+
+    const rate = elapsedDays
+      ? Math.round(successfulCount / elapsedDays * 100)
+      : 0;
+
+    $("monthTitle").textContent = `${year}년 ${month + 1}월`;
+    $("count").textContent = successfulCount;
+    $("rate").textContent = rate;
+    $("fill").style.width = `${rate}%`;
+    $("remaining").textContent = monthRelation === 0
+      ? Math.max(0, total - now.getDate())
+      : 0;
+
+    const grid = $("days");
+    grid.innerHTML = "";
+
+    for (let i = 0; i < firstDay; i++) {
+      const blank = document.createElement("div");
+      blank.className = "day empty";
+      blank.setAttribute("aria-hidden", "true");
+      grid.appendChild(blank);
+    }
+
+    for (let day = 1; day <= total; day++) {
+      const key = dateKey(year, month, day);
+      const isFuture = key > todayKey;
+      const isToday = key === todayKey;
+      const hasExpense = expenseDates.has(key);
+      const success = !isFuture && !hasExpense;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "day";
+
+      if (success) button.classList.add("success");
+      if (!isFuture && hasExpense) button.classList.add("spent");
+      if (isToday) button.classList.add("today");
+      if (isFuture) button.classList.add("future");
+
+      button.disabled = isFuture;
+      button.setAttribute("aria-pressed", String(success));
+      button.setAttribute(
+        "aria-label",
+        `${year}년 ${month + 1}월 ${day}일, ${
+          isFuture ? "미래 날짜" :
+          hasExpense ? "지출 기록 있음" : "무지출 성공"
+        }`
+      );
+
+      const number = document.createElement("span");
+      number.className = "num";
+      number.textContent = day;
+
+      const mark = document.createElement("span");
+      mark.className = "mark";
+      mark.textContent = isFuture ? "" : hasExpense ? "×" : "✓";
+
+      button.append(number, mark);
+
+      button.addEventListener("click", () => {
+        const formatted = `${year}년 ${month + 1}월 ${day}일`;
+
+        if (isFuture) {
+          $("dayDetail").textContent =
+            `${formatted}: 아직 날짜가 오지 않아 판정하지 않아요.`;
+        } else if (hasExpense) {
+          const count = expenseCounts.get(key) || 0;
+          $("dayDetail").textContent =
+            `❌ ${formatted}: 지출 기록 ${count}건이 있어요. 무지출 챌린지 실패!`;
+        } else {
+          $("dayDetail").textContent =
+            `🍊 ${formatted}: 해당 날짜에 지출 기록이 없어요. 무지출 챌린지 성공!`;
+        }
+      });
+
+      grid.appendChild(button);
+    }
+  }
+
+  function changeMonth(offset) {
+    month += offset;
+
+    if (month < 0) {
+      month = 11;
+      year--;
+    } else if (month > 11) {
+      month = 0;
+      year++;
+    }
+
+    render();
+  }
+
+  async function connect(header) {
+    $("connectButton").disabled = true;
+    $("connectButton").textContent = "가계부 불러오는 중...";
+    setLoginStatus("Notion에서 가계부 기록을 가져오고 있어요.");
+
+    try {
+      await fetchExpenses(header);
+
+      authHeader = header;
+      $("loginPanel").hidden = true;
+      $("mainPanel").hidden = false;
+
+      $("connectionStatus").textContent =
+        `연결 성공 · ${recordCount}개 기록 확인`;
+
+      $("dataWarning").hidden = !hasMoreRecords;
+      if (hasMoreRecords) {
+        $("dataWarning").textContent =
+          "주의: 기록이 100개를 초과해 일부 기록만 확인됐어요. 정확한 판정을 위해 다음 단계에서 페이지 조회 기능을 추가해야 해요.";
+      }
+
+      $("dayDetail").textContent =
+        "달력에서 날짜를 선택하면 무지출 판정 결과를 확인할 수 있어요.";
+
+      render();
+    } catch (error) {
+      setLoginStatus(
+        error.message ||
+          "연결에 실패했어요. 비밀번호와 서버 설정을 확인해 주세요.",
+        true
+      );
+    } finally {
+      $("connectButton").disabled = false;
+      $("connectButton").textContent = "가계부 연결하기";
+    }
+  }
+
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const password = $("password").value;
+
+    try {
+      // 비밀번호는 메모리에서만 사용하며 저장하지 않아요.
+      const basicValue = btoa(`ssungyul:${password}`);
+      await connect(`Basic ${basicValue}`);
+      if (authHeader) $("password").value = "";
+    } catch {
+      setLoginStatus(
+        "비밀번호를 확인해 주세요. 영문, 숫자, 기호로 설정한 비밀번호를 입력해 주세요.",
+        true
+      );
+    }
+  });
+
+  $("refreshButton").addEventListener("click", async () => {
+    if (!authHeader) return;
+
+    $("refreshButton").disabled = true;
+    $("connectionStatus").textContent = "기록 새로고침 중...";
+
+    try {
+      await fetchExpenses(authHeader);
+      $("connectionStatus").textContent =
+        `새로고침 완료 · ${recordCount}개 기록 확인`;
+
+      $("dataWarning").hidden = !hasMoreRecords;
+      if (hasMoreRecords) {
+        $("dataWarning").textContent =
+          "주의: 100개를 초과하는 기록이 있어 전체 기록을 불러오는 기능이 필요해요.";
+      }
+
+      render();
+    } catch (error) {
+      $("connectionStatus").textContent =
+        error.message || "새로고침에 실패했어요.";
+    } finally {
+      $("refreshButton").disabled = false;
+    }
+  });
+
+  $("logoutButton").addEventListener("click", () => {
+    authHeader = "";
+    expenseDates = new Set();
+    expenseCounts = new Map();
+    recordCount = 0;
+    hasMoreRecords = false;
+
+    $("mainPanel").hidden = true;
+    $("loginPanel").hidden = false;
+    $("password").value = "";
+    setLoginStatus("연결이 해제됐어요. 다시 연결할 수 있어요.");
+  });
+
+  $("prev").addEventListener("click", () => changeMonth(-1));
+  $("next").addEventListener("click", () => changeMonth(1));
+
+  $("today").addEventListener("click", () => {
+    const now = new Date();
+    year = now.getFullYear();
+    month = now.getMonth();
+    render();
+  });
 })();
 </script>
-</body></html>
-```[cite: 2]
+</body>
+</html>
