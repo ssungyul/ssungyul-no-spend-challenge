@@ -29,9 +29,22 @@ body{
 .eyebrow{font-size:10px;letter-spacing:.15em;font-weight:800;color:var(--deep);margin-bottom:7px}
 h1{font-size:clamp(23px,4vw,31px);letter-spacing:-.06em;line-height:1.25;margin:0}
 .subtitle{font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 0}
-.mascot{
-  display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;
-  border-radius:18px;background:#fff0b9;font-size:28px
+.mascot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  background: transparent;
+  border-radius: 0;
+}
+
+.mascot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .panel,.calendar{
   padding:16px;border:1px solid var(--line);
@@ -88,23 +101,10 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   align-items:center;justify-content:center;gap:4px;padding:0
 }
 .day.empty{background:transparent;pointer-events:none}
-/* 무지출 성공: 따뜻한 주황색 */
-.day.success {
-  background: #fff0da;
-  border-color: #f4bd75;
-}
-.day.success .mark {
-  color: #e97820;
-}
-
-/* 지출한 날: 연한 파란색 */
-.day.spent {
-  background: #eaf3ff;
-  border-color: #b8d5f5;
-}
-.day.spent .mark {
-  color: #397ab8;
-}
+.day.success{background:#fff0da;border-color:#f4bd75}
+.day.success .mark{color:#e97820}
+.day.spent{background:#eaf3ff;border-color:#b8d5f5}
+.day.spent .mark{color:#397ab8}
 .day.today{box-shadow:inset 0 0 0 2px var(--orange)}
 .day.today .num{color:var(--deep)}
 .day.future,.day.unknown{color:#b8aa9b;background:#fcfaf7}
@@ -144,18 +144,21 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
       <h1>이번 달 무지출 챌린지</h1>
       <p class="subtitle">작은 소비를 참은 하루가 모여, 내 자산이 돼요 💰</p>
     </div>
-    <div class="mascot" aria-hidden="true">🍊</div>
+    <div class="mascot" aria-hidden="true">
+  <img src="./ssungyul-cat.png" alt="">
+</div>
   </header>
 
   <section class="panel" id="loginPanel">
     <h2>내 Notion 가계부 연결하기</h2>
-    <p>개인용 테스트 화면이에요. Cloudflare에 설정한 앱 비밀번호로 접속해요. 비밀번호는 이 페이지에 저장하지 않아요.</p>
-    <form id="loginForm">
-      <label class="field-label" for="password">앱 비밀번호</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="APP_PASSWORD 입력" required>
-      <button class="primary" id="connectButton" type="submit">가계부 연결하기</button>
-    </form>
+    <p>버튼을 누르고 Notion에 로그인한 뒤, 이 챌린지에 사용할 가계부 데이터베이스를 선택해 주세요. 지원 속성은 날짜·금액·대분류이며, 대분류에 '지출'이 표시되어야 해요.</p>
+    <button class="primary" id="connectButton" type="button">Notion 연결하기</button>
     <div id="loginStatus" class="status" role="status"></div>
+    <div id="databasePicker" hidden style="margin-top:14px">
+      <label class="field-label" for="databaseSelect">가계부 데이터베이스 선택</label>
+      <select id="databaseSelect" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;margin-bottom:10px"></select>
+      <button class="primary" id="useDatabaseButton" type="button">이 가계부 사용하기</button>
+    </div>
   </section>
 
   <section id="mainPanel" hidden>
@@ -204,14 +207,14 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
       <div class="legend">
         <span><b>🧡</b> 무지출 성공</span>
-<span><b style="color:#397ab8">×</b> 지출 기록 있음</span>
+        <span><b style="color:#397ab8">×</b> 지출 기록 있음</span>
         <span><i class="ring"></i> 오늘</span>
       </div>
 
       <div class="day-detail" id="dayDetail" aria-live="polite">
         달력에서 날짜를 선택하면 판정 결과를 확인할 수 있어요.
       </div>
-      <p class="hint">Notion의 매일가계부를 기준으로 판정해요. 해당 날짜에 대분류가 '지출'인 항목이 하나라도 있으면 실패, 없으면 성공으로 표시해요. 미래 날짜는 판정하지 않아요.</p>
+      <p class="hint">Notion 가계부를 기준으로 판정해요. 해당 날짜에 대분류가 '지출'인 항목이 하나라도 있으면 실패, 없으면 성공으로 표시해요. 미래 날짜는 판정하지 않아요.</p>
       <p class="hint" id="dataWarning" hidden></p>
     </section>
   </section>
@@ -230,6 +233,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   const $ = id => document.getElementById(id);
 
   let authHeader = "";
+  let selectedDatabaseId = localStorage.getItem("ssungyulDatabaseId") || "";
   let expenseDates = new Set();
   let expenseCounts = new Map();
   let recordCount = 0;
@@ -274,7 +278,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
   async function fetchMonthData(header, targetMonth) {
     const response = await fetch(
-      `${API_BASE}/read-expenses?month=${encodeURIComponent(targetMonth)}`,
+      `${API_BASE}/read-expenses?month=${encodeURIComponent(targetMonth)}&database_id=${encodeURIComponent(selectedDatabaseId)}`,
       {
         method: "GET",
         headers: { "Authorization": header },
@@ -293,7 +297,8 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error("비밀번호가 맞지 않거나 로그인이 만료됐어요. 다시 확인해 주세요.");
+        sessionStorage.removeItem("ssungyulSession");
+        throw new Error("연결이 만료됐어요. Notion을 다시 연결해 주세요.");
       }
       throw new Error(data.error || raw || `서버 오류 (${response.status})`);
     }
@@ -334,20 +339,74 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   }
 
   async function connect(header) {
+    authHeader = header;
+    sessionStorage.setItem("ssungyulSession", header.replace(/^Bearer /, ""));
     $("connectButton").disabled = true;
     $("connectButton").textContent = "가계부 불러오는 중...";
-    setLoginStatus("Notion 가계부 기록을 확인하고 있어요.");
+    setLoginStatus("Notion 데이터베이스를 확인하고 있어요.");
+
+    try {
+      const dbResponse = await fetch(`${API_BASE}/find-database`, {
+        headers: { Authorization: authHeader },
+        cache: "no-store"
+      });
+      const dbData = await dbResponse.json();
+
+      if (!dbResponse.ok) {
+        throw new Error(dbData.error || "데이터베이스를 찾지 못했어요.");
+      }
+
+      const select = $("databaseSelect");
+      select.innerHTML = "";
+
+      for (const db of (dbData.results || [])) {
+        const option = document.createElement("option");
+        option.value = db.id;
+        option.textContent = db.title;
+        select.appendChild(option);
+      }
+
+      if (!(dbData.results || []).length) {
+        throw new Error("연결된 Notion에서 데이터베이스를 찾지 못했어요. Notion에서 해당 페이지를 연결 앱에 공유했는지 확인해 주세요.");
+      }
+
+      if (selectedDatabaseId && [...select.options].some(o => o.value === selectedDatabaseId)) {
+        select.value = selectedDatabaseId;
+      }
+
+      $("databasePicker").hidden = false;
+      setLoginStatus("가계부를 선택한 뒤 '이 가계부 사용하기'를 눌러 주세요.");
+      $("connectButton").hidden = true;
+    } catch (error) {
+      authHeader = "";
+      sessionStorage.removeItem("ssungyulSession");
+      setLoginStatus(error.message || "연결에 실패했어요.", true);
+    } finally {
+      $("connectButton").disabled = false;
+      $("connectButton").textContent = "Notion 연결하기";
+    }
+  }
+
+  async function useSelectedDatabase() {
+    selectedDatabaseId = $("databaseSelect").value;
+
+    if (!selectedDatabaseId) {
+      setLoginStatus("가계부 데이터베이스를 선택해 주세요.", true);
+      return;
+    }
+
+    localStorage.setItem("ssungyulDatabaseId", selectedDatabaseId);
+    const header = authHeader;
+    $("useDatabaseButton").disabled = true;
+    $("useDatabaseButton").textContent = "기록 확인 중...";
 
     try {
       const targetMonth = monthKey(year, month);
       const data = await fetchMonthData(header, targetMonth);
-
-      authHeader = header;
       applyMonthData(data, targetMonth);
 
       $("loginPanel").hidden = true;
       $("mainPanel").hidden = false;
-      $("password").value = "";
       $("connectionStatus").textContent =
         `${targetMonth} 연결 성공 · ${recordCount}개 기록 · ${pagesFetched}페이지`;
       $("dataWarning").hidden = true;
@@ -356,11 +415,10 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
       render();
     } catch (error) {
-      authHeader = "";
-      setLoginStatus(error.message || "연결에 실패했어요.", true);
+      setLoginStatus(error.message || "가계부를 불러오지 못했어요.", true);
     } finally {
-      $("connectButton").disabled = false;
-      $("connectButton").textContent = "가계부 연결하기";
+      $("useDatabaseButton").disabled = false;
+      $("useDatabaseButton").textContent = "이 가계부 사용하기";
     }
   }
 
@@ -377,16 +435,13 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
     recordCount = 0;
     pagesFetched = 0;
 
-    $("connectionStatus").textContent =
-      `${targetMonth} 기록 불러오는 중...`;
+    $("connectionStatus").textContent = `${targetMonth} 기록 불러오는 중...`;
     $("dataWarning").hidden = true;
     $("dayDetail").textContent = "선택한 달의 기록을 불러오고 있어요.";
     render();
 
     try {
       const data = await fetchMonthData(authHeader, targetMonth);
-
-      // 사용자가 다른 달로 이동했다면 늦게 온 응답은 무시
       if (thisRequest !== requestNumber) return;
 
       applyMonthData(data, targetMonth);
@@ -421,9 +476,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
     const today = todayKey();
     const total = daysInMonth(year, month);
     const firstDay = new Date(year, month, 1).getDay();
-    const relation = monthCompare(
-      year, month, now.getFullYear(), now.getMonth()
-    );
+    const relation = monthCompare(year, month, now.getFullYear(), now.getMonth());
     const targetMonth = monthKey(year, month);
     const loaded = loadedMonth === targetMonth && !loadError;
 
@@ -438,9 +491,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
       }
     }
 
-    const rate = elapsedDays
-      ? Math.round(successes / elapsedDays * 100)
-      : 0;
+    const rate = elapsedDays ? Math.round(successes / elapsedDays * 100) : 0;
 
     $("monthTitle").textContent = `${year}년 ${month + 1}월`;
     $("count").textContent = loaded ? successes : "—";
@@ -477,7 +528,6 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
       if (isFuture) button.classList.add("future");
       if (!known && !isFuture) button.classList.add("unknown");
 
-      // 기록을 완전히 읽지 못한 날짜는 성공/실패로 판정하지 않음
       button.disabled = isFuture || !known;
 
       const number = document.createElement("span");
@@ -532,21 +582,49 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
     loadMonth();
   }
 
-  $("loginForm").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const password = $("password").value;
-
-    try {
-      const encoded = btoa(`ssungyul:${password}`);
-      await connect(`Basic ${encoded}`);
-    } catch (error) {
-      setLoginStatus(
-        "로그인 요청을 만들지 못했어요. 영문, 숫자, 기호로 설정한 비밀번호인지 확인해 주세요.",
-        true
-      );
-    }
+  $("connectButton").addEventListener("click", () => {
+    window.location.href = `${API_BASE}/auth`;
   });
+
+  $("useDatabaseButton").addEventListener("click", useSelectedDatabase);
+
+  async function finishOAuthIfNeeded() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const oauthError = params.get("oauth_error");
+
+    if (oauthError) {
+      setLoginStatus(`Notion 연결이 취소되었거나 실패했어요: ${oauthError}`, true);
+    }
+
+    if (code) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setLoginStatus("Notion 연결을 마무리하고 있어요.");
+
+      try {
+        const response = await fetch(`${API_BASE}/session`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "로그인 확인에 실패했어요.");
+
+        authHeader = `Bearer ${data.session_token}`;
+        await connect(authHeader);
+        return;
+      } catch (error) {
+        setLoginStatus(error.message || "Notion 연결에 실패했어요.", true);
+      }
+    }
+
+    const saved = sessionStorage.getItem("ssungyulSession");
+    if (saved) {
+      authHeader = `Bearer ${saved}`;
+      await connect(authHeader);
+    }
+  }
 
   $("refreshButton").addEventListener("click", loadMonth);
   $("prev").addEventListener("click", () => changeMonth(-1));
@@ -561,7 +639,6 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   });
 
   $("logoutButton").addEventListener("click", () => {
-    // 브라우저 메모리에서 앱 인증 정보를 지움
     authHeader = "";
     expenseDates = new Set();
     expenseCounts = new Map();
@@ -571,12 +648,15 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
 
     $("mainPanel").hidden = true;
     $("loginPanel").hidden = false;
-    $("password").value = "";
+    sessionStorage.removeItem("ssungyulSession");
+    $("databasePicker").hidden = true;
+    $("connectButton").hidden = false;
     setLoginStatus("연결이 해제됐어요. 다시 연결할 수 있어요.");
     render();
   });
 
   render();
+  finishOAuthIfNeeded();
 })();
 </script>
 </body>
