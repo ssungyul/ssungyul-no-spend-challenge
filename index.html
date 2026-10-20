@@ -233,7 +233,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   const $ = id => document.getElementById(id);
 
   let authHeader = "";
-  let selectedDatabaseId = localStorage.getItem("ssungyulDatabaseId") || "";
+  let selectedDatabaseId = "";
   let expenseDates = new Set();
   let expenseCounts = new Map();
   let recordCount = 0;
@@ -339,7 +339,10 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
   }
 
   async function connect(header) {
-    authHeader = header;
+  authHeader = header;
+  const sessionKey = header.replace(/^Bearer /, "");
+  selectedDatabaseId =
+    sessionStorage.getItem(`ssungyulDatabaseId:${sessionKey}`) || "";
     sessionStorage.setItem("ssungyulSession", header.replace(/^Bearer /, ""));
     $("connectButton").disabled = true;
     $("connectButton").textContent = "가계부 불러오는 중...";
@@ -395,7 +398,11 @@ button:focus-visible,input:focus-visible{outline:3px solid #e8a04d;outline-offse
       return;
     }
 
-    localStorage.setItem("ssungyulDatabaseId", selectedDatabaseId);
+    const sessionKey = authHeader.replace(/^Bearer /, "");
+sessionStorage.setItem(
+  `ssungyulDatabaseId:${sessionKey}`,
+  selectedDatabaseId
+);
     const header = authHeader;
     $("useDatabaseButton").disabled = true;
     $("useDatabaseButton").textContent = "기록 확인 중...";
